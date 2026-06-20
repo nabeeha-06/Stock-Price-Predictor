@@ -9,9 +9,9 @@ from sklearn.metrics import mean_squared_error
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, LSTM, Dropout
 
-# ==========================
+
 # Step 1: Load Dataset
-# ==========================
+
 url = "https://raw.githubusercontent.com/plotly/datasets/master/finance-charts-apple.csv"
 data = pd.read_csv(url)
 
@@ -23,9 +23,8 @@ print("First 5 rows:")
 print(data.head())
 print("\nData Shape:", data.shape)
 
-# ==========================
+
 # Step 2: Data Preprocessing
-# ==========================
 scaler = MinMaxScaler(feature_range=(0, 1))
 scaled_data = scaler.fit_transform(data)
 
@@ -34,9 +33,8 @@ train_size = int(len(scaled_data) * 0.8)
 train_data = scaled_data[:train_size]
 test_data = scaled_data[train_size:]
 
-# ==========================
 # Step 3: Create Sequences
-# ==========================
+
 def create_dataset(dataset, time_step=60):
     X, Y = [], []
 
@@ -54,9 +52,8 @@ X_test, y_test = create_dataset(test_data, time_step)
 print("X_train Shape:", X_train.shape)
 print("X_test Shape:", X_test.shape)
 
-# ==========================
 # Step 4: Build LSTM Model
-# ==========================
+
 model = Sequential()
 
 model.add(
@@ -79,9 +76,9 @@ model.compile(
     loss='mean_squared_error'
 )
 
-# ==========================
+
 # Step 5: Train Model
-# ==========================
+
 model.fit(
     X_train,
     y_train,
@@ -90,9 +87,8 @@ model.fit(
     verbose=1
 )
 
-# ==========================
 # Step 6: Predictions
-# ==========================
+
 train_predict = model.predict(X_train)
 test_predict = model.predict(X_test)
 
@@ -106,9 +102,8 @@ test_full[:, 3] = test_predict[:, 0]
 train_predict_actual = scaler.inverse_transform(train_full)[:, 3]
 test_predict_actual = scaler.inverse_transform(test_full)[:, 3]
 
-# ==========================
 # Step 7: RMSE Calculation
-# ==========================
+
 y_test_full = np.zeros((len(y_test), 5))
 y_test_full[:, 3] = y_test
 
@@ -123,9 +118,8 @@ rmse = math.sqrt(
 
 print("\nRMSE:", rmse)
 
-# ==========================
 # Step 8: Plot Results
-# ==========================
+
 plt.figure(figsize=(12, 6))
 
 plt.plot(
@@ -159,9 +153,8 @@ plt.ylabel("Stock Price")
 plt.legend()
 plt.show()
 
-# ==========================
 # Step 9: Next Day Prediction
-# ==========================
+
 last_60_days = scaled_data[-60:]
 last_60_days = last_60_days.reshape(1, 60, 5)
 
